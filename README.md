@@ -1,12 +1,12 @@
-# Basic template for wp plugin that includes React
+# Reactive WordPress Commentss
 
 ## Simple start (no tooling setup needed)
 
 * Requires Gutenberg plugin, which bundles React into WP
-* Download the base directory `react-wp-plugin` to plugins folder of your local dev server
+* Download the base directory `react-wp-comments` to plugins folder of your local dev server
 * Create a WP page with slug 'react-in-wp' and content like "hmm, react has not loaded"
 * Activate the plugin & check your page for React welcome message 
-* Problems? Check settings in files: `react-wp-plugin.php` and `assets/js/main.js`
+* Problems? Check settings in files: `react-wp-comments.php` and `assets/js/main.js`
 * Works? start the tooling below & try the other snippets in `src/index.js`
 
 ## Tooling

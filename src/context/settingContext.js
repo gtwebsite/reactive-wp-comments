@@ -22,4 +22,5 @@ export const settingInitialState = {
   comments_count: parseInt( rwpc_object.comments ),
   activeComment: 0,
   post_id: parseInt( rwpc_object.post_id ),
+  user: {}
 };

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form/dist/index.ie11";
 
 import { Context } from "../context";
 
-const { useState, useContext } = wp.element;
+const { useState, useEffect, useContext } = wp.element;
 
 const CommentForm = ({ index, postID, parentID, replyTo }) => {
   const { state, setSetting } = useContext(Context);
@@ -14,10 +14,10 @@ const CommentForm = ({ index, postID, parentID, replyTo }) => {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const user = rwpc_object.user.data;
+  const user = typeof rwpc_object.user.data.display_name != 'undefined' ? rwpc_object.user.data : state.setting.user;
   const login = rwpc_object.login_url;
 
-  const { register, handleSubmit, errors, setValue } = useForm({
+  const { register, handleSubmit, errors, setValue, getValues } = useForm({
     reValidateMode: 'onSubmit',
     defaultValues: {
       author_name: user.display_name,
@@ -25,6 +25,10 @@ const CommentForm = ({ index, postID, parentID, replyTo }) => {
       content: replyTo ? `@${replyTo}` : ''
     },
   });
+
+  useEffect(()=>{
+    console.log(state.setting);
+  }, [])
 
   const afterSubmit = async(data) => {
     setSuccessMsg(data.status === 'hold' ? 'Comment submitted for approval.' : 'Comment submitted successfully.');
@@ -38,6 +42,7 @@ const CommentForm = ({ index, postID, parentID, replyTo }) => {
     if( data.status !== 'approved' ) {
       setSubmitting(false);
       setSubmitted(true);
+      setSetting({...state.setting, user: { display_name: data.author_name, user_email: getValues('author_email') }});
       return;
     }
   
@@ -67,7 +72,7 @@ const CommentForm = ({ index, postID, parentID, replyTo }) => {
           });
         }
 
-        setSetting({...state.setting, comments: newCollection, comments_count: state.setting.comments_count + 1 });
+        setSetting({...state.setting, comments: newCollection, comments_count: state.setting.comments_count + 1});
         setSubmitting(false);
         setSubmitted(true);
   
@@ -115,12 +120,12 @@ const CommentForm = ({ index, postID, parentID, replyTo }) => {
           <div className="rwpc-row">
             <div className="rwpc-col-half rwpc-form-group">
               <label htmlFor="author_name" className="rwpc-sr-only">Name</label>
-              <input type={user.display_name ? 'hidden' : 'text'} name="author_name" id="author_name" placeholder="Name" ref={register({ required: true })} disabled={submitting} className="rwpc-input" />
+              <input type={typeof rwpc_object.user.data.display_name != 'undefined' ? 'hidden' : 'text'} name="author_name" id="author_name" placeholder="Name" ref={register({ required: true })} disabled={submitting} className="rwpc-input" />
               {errors.author_name && <span className="rwpc-error">This field is required</span>}
             </div>
             <div className="rwpc-col-half rwpc-form-group">
               <label htmlFor="author_email" className="rwpc-sr-only">Email</label>
-              <input type={user.user_email ? 'hidden' : 'email'} name="author_email" id="author_email" placeholder="Email" ref={register({ required: true })} disabled={submitting} className="rwpc-input" />
+              <input type={typeof rwpc_object.user.data.user_email != 'undefined' ? 'hidden' : 'email'} name="author_email" id="author_email" placeholder="Email" ref={register({ required: true })} disabled={submitting} className="rwpc-input" />
               {errors.author_email && <span className="rwpc-error">This field is required</span>}
             </div>
             <div className="rwpc-col-full rwpc-form-group">

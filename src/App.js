@@ -13,18 +13,16 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
-    setTimeout(()=>{
-      fetchData({parentId: 0});
-    }, 1000)
+    fetchData({parentId: 0, number: 99});
   }, [])
 
   useEffect(()=>{
-    console.log(state);
+    //console.log(state);
   })
 
-  const fetchData = async ({parentId, index}) => {
+  const fetchData = async ({parentId, index, number}) => {
     try {
-      await wp.apiFetch( { path: `/rwpc/v1/comments/${state.setting.post_id}?parent_id=${parentId}` } ).then( posts => {
+      await wp.apiFetch( { path: `/rwpc/v1/comments/${state.setting.post_id}?parent_id=${parentId}&number=${number}` } ).then( posts => {
         const newCollection = comments.length > 0 ? update(comments, {[index]: {children: {$set: posts}}}) : [];
         setLoading(false);
         setSetting({...state.setting, comments: newCollection.length > 0 ? newCollection : posts });
